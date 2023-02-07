@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "tb_pressure_safety_valves")
-public class PressureSafetyValve {
+public class PressureSafetyValve extends BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
