@@ -1,6 +1,7 @@
 package br.com.palota.mtmanager.domain.service;
 
 import br.com.palota.mtmanager.core.Constants;
+import br.com.palota.mtmanager.domain.exception.EntityNotFoundException;
 import br.com.palota.mtmanager.domain.model.Plant;
 import br.com.palota.mtmanager.domain.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,14 @@ public class PlantService {
 
     @Transactional
     public Plant create(Plant plant) {
-        log.info(Constants.LOG_METHOD_MESSAGE, "create", "salvando entidade Planta");
+        log.info(Constants.LOG_METHOD_MESSAGE, "create", "salvando entidade Plant");
         return plantRepository.save(plant);
+    }
+
+    public Plant findById(Long id) {
+        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Buscando entidade Plant por ID", id);
+        return plantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Entidade Plant com id %d não encontrada", id)));
     }
 
 }
