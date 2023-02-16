@@ -6,6 +6,8 @@ import br.com.palota.mtmanager.domain.model.Plant;
 import br.com.palota.mtmanager.domain.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,11 @@ public class PlantService {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Buscando entidade Plant por ID", id);
         return plantRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Entidade Plant com id %d não encontrada", id)));
+    }
+
+    public Page<Plant> findPaginated(Pageable pageable) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findPaginated", "Buscando entidades Plant paginadas");
+        return plantRepository.findAll(pageable);
     }
 
 }

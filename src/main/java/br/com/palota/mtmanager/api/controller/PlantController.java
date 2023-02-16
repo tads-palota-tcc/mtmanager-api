@@ -3,11 +3,14 @@ package br.com.palota.mtmanager.api.controller;
 import br.com.palota.mtmanager.api.assembler.PlantAssembler;
 import br.com.palota.mtmanager.api.dto.PlantCreationDTO;
 import br.com.palota.mtmanager.api.dto.PlantDetailsDTO;
+import br.com.palota.mtmanager.api.dto.PlantSummaryDTO;
 import br.com.palota.mtmanager.core.Constants;
 import br.com.palota.mtmanager.domain.service.PlantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +43,13 @@ public class PlantController {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade Plant por ID", id);
         var entity = plantService.findById(id);
         return ResponseEntity.ok(plantAssembler.fromEntity(entity));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<PlantSummaryDTO>> findPaginated(Pageable pageable) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findPaginated", "Recebendo chamada para listagem de entidades Plant");
+        var entityPage = plantService.findPaginated(pageable);
+        return ResponseEntity.ok(plantAssembler.fromEntityPage(entityPage));
     }
 
 }
