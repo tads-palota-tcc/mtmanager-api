@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -46,9 +47,9 @@ public class PlantController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PlantSummaryDTO>> findPaginated(Pageable pageable) {
-        log.info(Constants.LOG_METHOD_MESSAGE, "findPaginated", "Recebendo chamada para listagem de entidades Plant");
-        var entityPage = plantService.findPaginated(pageable);
+    public ResponseEntity<Page<PlantSummaryDTO>> findByRestriction(@RequestParam(required = false) String restriction, Pageable pageable) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Plant");
+        var entityPage = plantService.findByRestriction(restriction, pageable);
         return ResponseEntity.ok(plantAssembler.fromEntityPage(entityPage));
     }
 

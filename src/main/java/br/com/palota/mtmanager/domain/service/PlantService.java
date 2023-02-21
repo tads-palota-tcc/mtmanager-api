@@ -30,9 +30,9 @@ public class PlantService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Entidade Plant com id %d não encontrada", id)));
     }
 
-    public Page<Plant> findPaginated(Pageable pageable) {
-        log.info(Constants.LOG_METHOD_MESSAGE, "findPaginated", "Buscando entidades Plant paginadas");
-        return plantRepository.findAll(pageable);
+    public Page<Plant> findByRestriction(String restriction, Pageable pageable) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Buscando entidades Plant paginadas");
+        return plantRepository.findByRestriction(restriction, pageable);
     }
 
 }
