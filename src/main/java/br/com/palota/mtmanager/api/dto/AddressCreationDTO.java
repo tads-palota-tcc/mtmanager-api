@@ -26,8 +26,8 @@ public class AddressCreationDTO {
     @Size(min = 2, max = 100)
     private String city;
 
-    @NotNull
-    private State state;
+    @NotBlank
+    private String state;
 
     @NotBlank
     @Pattern(regexp = "\\d{8}")
