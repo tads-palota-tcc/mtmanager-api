@@ -1,10 +1,7 @@
 package br.com.palota.mtmanager.domain.service;
 
-import br.com.palota.mtmanager.api.dto.PlantCreationDTO;
-import br.com.palota.mtmanager.api.dto.PlantDetailsDTO;
-import br.com.palota.mtmanager.api.dto.PlantSummaryDTO;
 import br.com.palota.mtmanager.core.Constants;
-import br.com.palota.mtmanager.domain.exception.EntityNotFoundException;
+import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
 import br.com.palota.mtmanager.domain.model.Plant;
 import br.com.palota.mtmanager.domain.repository.PlantRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,45 +18,31 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlantService {
 
     private final PlantRepository plantRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper mapper;
 
     @Transactional
-    public PlantDetailsDTO create(PlantCreationDTO dto) {
+    public Plant save(Plant plant) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "salvando entidade Plant");
-        var entity = plantRepository.save(modelMapper.map(dto, Plant.class));
-        return modelMapper.map(entity, PlantDetailsDTO.class);
+        var entity = plantRepository.save(plant);
+        return entity;
     }
 
-    public PlantDetailsDTO findById(Long id) {
+    public Plant findById(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Buscando entidade Plant por ID", id);
-        var entity = findEntityById(id);
-        return modelMapper.map(entity, PlantDetailsDTO.class);
+        return plantRepository.findById(id)
+                .orElseThrow(() -> new PlantNotFoundException(String.format("Entidade Plant com id %d não encontrada", id)));
     }
 
-    public Page<PlantSummaryDTO> findByRestriction(String restriction, Pageable pageable) {
+    public Page<Plant> findByRestriction(String restriction, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Buscando entidades Plant paginadas");
-        return plantRepository.findByRestriction(restriction, pageable)
-                .map(entity -> modelMapper.map(entity, PlantSummaryDTO.class));
+        return plantRepository.findByRestriction(restriction, pageable);
     }
 
     @Transactional
     public void delete(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Deletando entiade Plant", id);
-        var entity = findEntityById(id);
+        var entity = findById(id);
         plantRepository.delete(entity);
-    }
-
-    @Transactional
-    public PlantDetailsDTO update(Long id, PlantCreationDTO dto) {
-        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Atualização entiade Plant", id);
-        var oldEntity = findEntityById(id);
-        modelMapper.map(dto, oldEntity);
-        return modelMapper.map(oldEntity, PlantDetailsDTO.class);
-    }
-
-    private Plant findEntityById(Long id) {
-        return plantRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Entidade Plant com id %d não encontrada", id)));
     }
 
 }
