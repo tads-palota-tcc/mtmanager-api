@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface AreaRepository extends JpaRepository<Area, Long> {
 
     @Query("select a from Area a where (:restriction is null or :restriction = '') "
@@ -14,4 +16,6 @@ public interface AreaRepository extends JpaRepository<Area, Long> {
             + "OR lower(a.name) like concat('%', lower(:restriction), '%') "
             + "OR lower(a.plant.code) like concat('%', lower(:restriction), '%')) ORDER BY a.code")
     Page<Area> findByRestriction(@Param("restriction") String restriction, Pageable pageable);
+
+    Optional<Area> findFirstByCodeAndPlantId(String code, Long id);
 }
