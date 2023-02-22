@@ -1,6 +1,5 @@
 package br.com.palota.mtmanager.api.controller;
 
-import br.com.palota.mtmanager.api.assembler.PlantAssembler;
 import br.com.palota.mtmanager.api.dto.PlantCreationDTO;
 import br.com.palota.mtmanager.api.dto.PlantDetailsDTO;
 import br.com.palota.mtmanager.api.dto.PlantSummaryDTO;
@@ -42,8 +41,10 @@ public class PlantController {
 
     @PutMapping("{id}")
     public ResponseEntity<PlantDetailsDTO> update(@PathVariable Long id, @RequestBody @Valid PlantCreationDTO dto) {
-        log.info(Constants.LOG_METHOD_MESSAGE, "update", "Recebendo chamada para atualização de entidade Plant");
-        return ResponseEntity.ok(plantService.update(id, dto));
+        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Recebendo chamada para atualização de entidade Plant", id);
+        var updated = plantService.update(id, dto);
+        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Entidade Plant atualizada com sucesso", id);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("{id}")
@@ -62,6 +63,7 @@ public class PlantController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Recebendo chamada para deletar entidade Plant", id);
         plantService.delete(id);
+        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Entidade Plant deletada com sucesso", id);
         return ResponseEntity.noContent().build();
     }
 

@@ -12,9 +12,6 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         var modelMapper = new ModelMapper();
 
-//        modelMapper.createTypeMap(Plant.class, Plant.class)
-//                .addMappings(mapper -> mapper.skip(Plant::setId));
-
         return modelMapper;
     }
 }

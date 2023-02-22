@@ -47,7 +47,6 @@ public class PlantService {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Deletando entiade Plant", id);
         var entity = findEntityById(id);
         plantRepository.delete(entity);
-        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Entiade Plant deletada com sucesso", id);
     }
 
     @Transactional
@@ -55,9 +54,7 @@ public class PlantService {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Atualização entiade Plant", id);
         var oldEntity = findEntityById(id);
         modelMapper.map(dto, oldEntity);
-        var response = modelMapper.map(oldEntity, PlantDetailsDTO.class);
-        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY, "update", "Entiade Plant atualizada com sucesso", response);
-        return response;
+        return modelMapper.map(oldEntity, PlantDetailsDTO.class);
     }
 
     private Plant findEntityById(Long id) {
