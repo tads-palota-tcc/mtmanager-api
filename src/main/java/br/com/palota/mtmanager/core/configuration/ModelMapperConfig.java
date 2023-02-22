@@ -1,6 +1,5 @@
 package br.com.palota.mtmanager.core.configuration;
 
-import br.com.palota.mtmanager.domain.model.Plant;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

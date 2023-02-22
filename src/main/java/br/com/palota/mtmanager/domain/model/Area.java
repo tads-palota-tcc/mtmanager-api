@@ -24,6 +24,8 @@ public class Area extends BaseEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String code;
+
     private String name;
 
     @ManyToOne
