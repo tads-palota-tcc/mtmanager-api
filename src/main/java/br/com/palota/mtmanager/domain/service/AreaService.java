@@ -1,6 +1,7 @@
 package br.com.palota.mtmanager.domain.service;
 
 import br.com.palota.mtmanager.core.Constants;
+import br.com.palota.mtmanager.domain.exception.BusinessException;
 import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
 import br.com.palota.mtmanager.domain.model.Area;
 import br.com.palota.mtmanager.domain.repository.AreaRepository;
@@ -24,6 +25,10 @@ public class AreaService {
     @Transactional
     public Area save(Area area) {
         log.info(Constants.LOG_METHOD_MESSAGE, "save", "salvando entidade Area");
+        areaRepository.findFirstByCodeAndPlantId(area.getCode(), area.getPlant().getId()).ifPresent(a ->
+                {
+                    throw new BusinessException(String.format("Já existe uma Área com código %s para esta Planta", area.getCode()));
+                });
         var plant = plantService.findById(area.getPlant().getId());
         area.setPlant(plant);
         return areaRepository.save(area);
