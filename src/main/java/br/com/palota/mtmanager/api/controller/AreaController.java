@@ -7,6 +7,7 @@ import br.com.palota.mtmanager.api.dto.AreaSummaryDTO;
 import br.com.palota.mtmanager.core.Constants;
 import br.com.palota.mtmanager.domain.exception.BusinessException;
 import br.com.palota.mtmanager.domain.exception.EntityNotFoundException;
+import br.com.palota.mtmanager.domain.repository.filter.AreaFilter;
 import br.com.palota.mtmanager.domain.service.AreaService;
 import br.com.palota.mtmanager.domain.service.PlantService;
 import jakarta.validation.Valid;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -71,9 +71,9 @@ public class AreaController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<AreaSummaryDTO>> findByRestriction(@RequestParam(required = false) String restriction, Pageable pageable) {
+    public ResponseEntity<Page<AreaSummaryDTO>> findByRestriction(AreaFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Area");
-        var entities = areaService.findByRestriction(restriction, pageable);
+        var entities = areaService.findByFilter(filter, pageable);
         return ResponseEntity.ok(areaAssembler.toSummaryPage(entities));
     }
 

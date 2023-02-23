@@ -6,4 +6,5 @@ public class Constants {
     public static final String LOG_METHOD_MESSAGE = "method={} message={} ";
     public static final String LOG_ENTITY_ID = "id={} ";
     public static final String LOG_ENTITY = "entity={} ";
+    public static final String LOG_FILTER = "filter={} ";
 }
