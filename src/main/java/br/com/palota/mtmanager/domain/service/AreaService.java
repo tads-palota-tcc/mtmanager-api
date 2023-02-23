@@ -5,6 +5,8 @@ import br.com.palota.mtmanager.domain.exception.BusinessException;
 import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
 import br.com.palota.mtmanager.domain.model.Area;
 import br.com.palota.mtmanager.domain.repository.AreaRepository;
+import br.com.palota.mtmanager.domain.repository.filter.AreaFilter;
+import br.com.palota.mtmanager.domain.repository.specs.AreaSpecs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -40,9 +42,9 @@ public class AreaService {
                 .orElseThrow(() -> new PlantNotFoundException(String.format("Entidade Area com id %d não encontrada", id)));
     }
 
-    public Page<Area> findByRestriction(String restriction, Pageable pageable) {
-        log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Buscando entidades Area paginadas");
-        return areaRepository.findByRestriction(restriction, pageable);
+    public Page<Area> findByFilter(AreaFilter filter, Pageable pageable) {
+        log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_FILTER, "findByFilter", "Buscando entidades Area paginadas por filtro", filter);
+        return areaRepository.findAll(AreaSpecs.withFilter(filter), pageable);
     }
 
     @Transactional

@@ -4,6 +4,7 @@ import br.com.palota.mtmanager.core.Constants;
 import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
 import br.com.palota.mtmanager.domain.model.Plant;
 import br.com.palota.mtmanager.domain.repository.PlantRepository;
+import br.com.palota.mtmanager.domain.repository.specs.PlantSpecs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -35,7 +36,7 @@ public class PlantService {
 
     public Page<Plant> findByRestriction(String restriction, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Buscando entidades Plant paginadas");
-        return plantRepository.findByRestriction(restriction, pageable);
+        return plantRepository.findAll(PlantSpecs.withRestriction(restriction), pageable);
     }
 
     @Transactional

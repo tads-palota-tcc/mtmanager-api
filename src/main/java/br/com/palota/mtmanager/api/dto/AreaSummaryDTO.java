@@ -11,4 +11,6 @@ public class AreaSummaryDTO {
 
     private String name;
 
+    private PlantSummaryDTO plant;
+
 }
