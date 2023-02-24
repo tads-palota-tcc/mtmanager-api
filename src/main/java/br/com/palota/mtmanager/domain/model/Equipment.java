@@ -46,6 +46,13 @@ public class Equipment extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private EquipmentType type;
 
+    @Enumerated(EnumType.STRING)
+    private FluidClass fluidClass;
+
+    private Double volume;
+
+    private Double maxOperationPressure;
+
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "equipment")
     private Set<PressureSafetyValve> pressureSafetyValves = new HashSet<>();
@@ -84,6 +91,56 @@ public class Equipment extends BaseEntity<Long> {
         }
         this.pressureIndicators.remove(pressureIndicator);
         pressureIndicator.setEquipment(null);
+    }
+
+    private PotentialRiskGroup getPotentialRiskGroup() {
+        var pv = maxOperationPressure * volume;
+        if (pv >= 100.0) return PotentialRiskGroup.GROUP_1;
+        if (pv < 100.0 && pv >= 30.0) return PotentialRiskGroup.GROUP_2;
+        if (pv < 30.0 && pv >= 2.5) return PotentialRiskGroup.GROUP_3;
+        if (pv < 2.5 && pv >= 1.0) return PotentialRiskGroup.GROUP_4;
+        return PotentialRiskGroup.GROUP_5;
+    }
+
+    public Category getCategory() {
+        Category category = null;
+        var potentialRiskGroup = getPotentialRiskGroup();
+        switch (fluidClass) {
+            case A -> {
+                switch (potentialRiskGroup) {
+                    case GROUP_1, GROUP_2 -> category = Category.I;
+                    case GROUP_3 -> category = Category.II;
+                    default -> category = Category.III;
+                }
+            }
+            case B -> {
+                switch (potentialRiskGroup) {
+                    case GROUP_1 -> category = Category.I;
+                    case GROUP_2 -> category = Category.II;
+                    case GROUP_3 -> category = Category.III;
+                    case GROUP_4, GROUP_5 -> category = Category.V;
+                }
+            }
+            case C -> {
+                switch (potentialRiskGroup) {
+                    case GROUP_1 -> category = Category.I;
+                    case GROUP_2 -> category = Category.II;
+                    case GROUP_3 -> category = Category.III;
+                    case GROUP_4 -> category = Category.IV;
+                    case GROUP_5 -> category = Category.V;
+                }
+            }
+            default -> {
+                switch (potentialRiskGroup) {
+                    case GROUP_1 -> category = Category.II;
+                    case GROUP_2 -> category = Category.III;
+                    case GROUP_3 -> category = Category.IV;
+                    case GROUP_4, GROUP_5 -> category = Category.V;
+                }
+            }
+
+        }
+        return category;
     }
 
 }
