@@ -25,9 +25,13 @@ create table tb_equipments (
     tag varchar(40) not null,
     name varchar(100) not null,
     description varchar(255),
+    volume decimal not null,
+    max_operation_pressure decimal not null,
+    fluid_class varchar(5) not null,
     area_id integer not null,
     type varchar(40) not null,
-    constraint fk_equipment_area_id foreign key(area_id) references tb_areas(id)
+    constraint fk_equipment_area_id foreign key(area_id) references tb_areas(id),
+    constraint uk_tb_equipments unique(tag, area_id)
 );
 
 create table tb_pressure_indicator (
