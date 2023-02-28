@@ -1,5 +1,8 @@
 package br.com.palota.mtmanager.domain.service;
 
+import br.com.palota.mtmanager.api.dto.EquipmentCreationDTO;
+import br.com.palota.mtmanager.api.dto.EquipmentDetailsDTO;
+import br.com.palota.mtmanager.api.dto.EquipmentSummaryDTO;
 import br.com.palota.mtmanager.core.Constants;
 import br.com.palota.mtmanager.domain.exception.BusinessException;
 import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
@@ -25,33 +28,48 @@ public class EquipmentService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public Equipment save(Equipment equipment) {
+    public EquipmentDetailsDTO save(EquipmentCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE, "save", "salvando entidade Equipment");
-        equipmentRepository.findFirstByTagAndAreaId(equipment.getTag(), equipment.getArea().getId()).ifPresent(a ->
+        equipmentRepository.findFirstByTagAndAreaId(dto.getTag(), dto.getArea().getId()).ifPresent(a ->
                 {
-                    throw new BusinessException(String.format("Já existe um Equipamento com a Tag %s para esta Área", equipment.getTag()));
+                    throw new BusinessException(String.format("Já existe um Equipamento com a Tag %s para esta Área", dto.getTag()));
                 });
-        var area = areaService.findById(equipment.getArea().getId());
+        var equipment = modelMapper.map(dto, Equipment.class);
+        var area = areaService.findOrFail(equipment.getArea().getId());
         equipment.setArea(area);
-        return equipmentRepository.save(equipment);
+        return modelMapper.map(equipmentRepository.save(equipment), EquipmentDetailsDTO.class);
     }
 
-    public Equipment findById(Long id) {
+    @Transactional
+    public EquipmentDetailsDTO update(Long id, EquipmentCreationDTO dto) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "update", "Atualizando entidade Equipment");
+        var oldEntity = findOrFail(id);
+        var area = areaService.findOrFail(dto.getArea().getId());
+        modelMapper.map(dto, oldEntity);
+        oldEntity.setArea(area);
+        return modelMapper.map(oldEntity, EquipmentDetailsDTO.class);
+    }
+
+    public EquipmentDetailsDTO findById(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Buscando entidade Equipment por ID", id);
-        return equipmentRepository.findById(id)
-                .orElseThrow(() -> new PlantNotFoundException(String.format("Entidade Equipment com id %d não encontrada", id)));
+        return modelMapper.map(findOrFail(id), EquipmentDetailsDTO.class);
     }
 
-    public Page<Equipment> findByFilter(EquipmentFilter filter, Pageable pageable) {
+    public Page<EquipmentSummaryDTO> findByFilter(EquipmentFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_FILTER, "findByFilter", "Buscando entidades Equipment paginadas por filtro", filter);
-        return equipmentRepository.findAll(EquipmentSpecs.withFilter(filter), pageable);
+        return equipmentRepository.findAll(EquipmentSpecs.withFilter(filter), pageable)
+                .map(e -> modelMapper.map(e, EquipmentSummaryDTO.class));
     }
 
     @Transactional
     public void delete(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Deletando entiade Equipment", id);
-        var entity = findById(id);
-        equipmentRepository.delete(entity);
+        equipmentRepository.delete(findOrFail(id));
+    }
+
+    protected Equipment findOrFail(Long id) {
+        return equipmentRepository.findById(id)
+                .orElseThrow(() -> new PlantNotFoundException(String.format("Entidade Equipment com id %d não encontrada", id)));
     }
 
 }

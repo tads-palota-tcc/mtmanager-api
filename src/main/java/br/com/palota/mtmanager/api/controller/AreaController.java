@@ -1,6 +1,5 @@
 package br.com.palota.mtmanager.api.controller;
 
-import br.com.palota.mtmanager.api.assembler.AreaAssembler;
 import br.com.palota.mtmanager.api.dto.AreaCreationDTO;
 import br.com.palota.mtmanager.api.dto.AreaDetailsDTO;
 import br.com.palota.mtmanager.api.dto.AreaSummaryDTO;
@@ -33,17 +32,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class AreaController {
 
     private final AreaService areaService;
-    private final AreaAssembler areaAssembler;
     private final PlantService plantService;
 
     @PostMapping
     public ResponseEntity<AreaDetailsDTO> create(@RequestBody @Valid AreaCreationDTO dto, UriComponentsBuilder builder) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "Recebendo chamada para criação de entidade Area");
         try {
-            var created = areaService.save(areaAssembler.toEntity(dto));
+            var created = areaService.save(dto);
             log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "create", "Entidade Area criada com sucesso", created.getId());
             var uri = builder.path("/areas/{id}").buildAndExpand(created.getId()).toUri();
-            return ResponseEntity.created(uri).body(areaAssembler.toDetailResponse(created));
+            return ResponseEntity.created(uri).body(created);
         } catch (EntityNotFoundException e) {
             throw new BusinessException(e.getMessage());
         }
@@ -52,12 +50,10 @@ public class AreaController {
     @PutMapping("{id}")
     public ResponseEntity<AreaDetailsDTO> update(@PathVariable Long id, @RequestBody @Valid AreaCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Recebendo chamada para atualização de entidade Area", id);
-        var entity = areaService.findById(id);
-        areaAssembler.copyToEntity(dto, entity);
         try {
-            entity = areaService.save(entity);
+            var updated = areaService.update(id, dto);
             log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Entidade Area atualizada com sucesso", id);
-            return ResponseEntity.ok(areaAssembler.toDetailResponse(entity));
+            return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             throw new BusinessException(e.getMessage());
         }
@@ -66,15 +62,13 @@ public class AreaController {
     @GetMapping("{id}")
     public ResponseEntity<AreaDetailsDTO> findById(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade Area por ID", id);
-        var entity = areaService.findById(id);
-        return ResponseEntity.ok(areaAssembler.toDetailResponse(entity));
+        return ResponseEntity.ok(areaService.findById(id));
     }
 
     @GetMapping
     public ResponseEntity<Page<AreaSummaryDTO>> findByRestriction(AreaFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Area");
-        var entities = areaService.findByFilter(filter, pageable);
-        return ResponseEntity.ok(areaAssembler.toSummaryPage(entities));
+        return ResponseEntity.ok(areaService.findByFilter(filter, pageable));
     }
 
     @DeleteMapping("{id}")

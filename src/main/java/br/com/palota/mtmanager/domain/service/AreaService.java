@@ -1,9 +1,13 @@
 package br.com.palota.mtmanager.domain.service;
 
+import br.com.palota.mtmanager.api.dto.AreaCreationDTO;
+import br.com.palota.mtmanager.api.dto.AreaDetailsDTO;
+import br.com.palota.mtmanager.api.dto.AreaSummaryDTO;
 import br.com.palota.mtmanager.core.Constants;
 import br.com.palota.mtmanager.domain.exception.BusinessException;
 import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
 import br.com.palota.mtmanager.domain.model.Area;
+import br.com.palota.mtmanager.domain.model.Plant;
 import br.com.palota.mtmanager.domain.repository.AreaRepository;
 import br.com.palota.mtmanager.domain.repository.filter.AreaFilter;
 import br.com.palota.mtmanager.domain.repository.specs.AreaSpecs;
@@ -25,33 +29,49 @@ public class AreaService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public Area save(Area area) {
+    public AreaDetailsDTO save(AreaCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE, "save", "salvando entidade Area");
-        areaRepository.findFirstByCodeAndPlantId(area.getCode(), area.getPlant().getId()).ifPresent(a ->
+        areaRepository.findFirstByCodeAndPlantId(dto.getCode(), dto.getPlant().getId()).ifPresent(a ->
                 {
-                    throw new BusinessException(String.format("Já existe uma Área com código %s para esta Planta", area.getCode()));
+                    throw new BusinessException(String.format("Já existe uma Área com código %s para esta Planta", dto.getCode()));
                 });
-        var plant = plantService.findById(area.getPlant().getId());
+        var area = modelMapper.map(dto, Area.class);
+        var plant = plantService.findOrFail(dto.getPlant().getId());
         area.setPlant(plant);
-        return areaRepository.save(area);
+        return modelMapper.map(areaRepository.save(area), AreaDetailsDTO.class);
     }
 
-    public Area findById(Long id) {
+    @Transactional
+    public AreaDetailsDTO update(Long id, AreaCreationDTO dto) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "update", "Atualizando entidade Area");
+        var oldEntity = findOrFail(id);
+        var plant = plantService.findOrFail(dto.getPlant().getId());
+        oldEntity.setPlant(new Plant());
+        modelMapper.map(dto, oldEntity);
+        oldEntity.setPlant(plant);
+        return modelMapper.map(oldEntity, AreaDetailsDTO.class);
+    }
+
+    public AreaDetailsDTO findById(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Buscando entidade Area por ID", id);
-        return areaRepository.findById(id)
-                .orElseThrow(() -> new PlantNotFoundException(String.format("Entidade Area com id %d não encontrada", id)));
+        return modelMapper.map(findOrFail(id), AreaDetailsDTO.class);
     }
 
-    public Page<Area> findByFilter(AreaFilter filter, Pageable pageable) {
+    public Page<AreaSummaryDTO> findByFilter(AreaFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_FILTER, "findByFilter", "Buscando entidades Area paginadas por filtro", filter);
-        return areaRepository.findAll(AreaSpecs.withFilter(filter), pageable);
+        return areaRepository.findAll(AreaSpecs.withFilter(filter), pageable)
+                .map(e -> modelMapper.map(e, AreaSummaryDTO.class));
     }
 
     @Transactional
     public void delete(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Deletando entiade Area", id);
-        var entity = findById(id);
-        areaRepository.delete(entity);
+        areaRepository.delete(findOrFail(id));
+    }
+
+    protected Area findOrFail(Long id) {
+        return areaRepository.findById(id)
+                .orElseThrow(() -> new PlantNotFoundException(String.format("Entidade Area com id %d não encontrada", id)));
     }
 
 }

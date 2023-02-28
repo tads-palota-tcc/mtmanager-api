@@ -1,10 +1,10 @@
 package br.com.palota.mtmanager.api.controller;
 
-import br.com.palota.mtmanager.api.assembler.PlantAssembler;
 import br.com.palota.mtmanager.api.dto.PlantCreationDTO;
 import br.com.palota.mtmanager.api.dto.PlantDetailsDTO;
 import br.com.palota.mtmanager.api.dto.PlantSummaryDTO;
 import br.com.palota.mtmanager.core.Constants;
+import br.com.palota.mtmanager.domain.repository.filter.PlantFilter;
 import br.com.palota.mtmanager.domain.service.PlantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,38 +30,34 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PlantController {
 
     private final PlantService plantService;
-    private final PlantAssembler plantAssembler;
 
     @PostMapping
     public ResponseEntity<PlantDetailsDTO> create(@RequestBody @Valid PlantCreationDTO dto, UriComponentsBuilder builder) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "Recebendo chamada para criação de entidade Plant");
-        var created = plantService.save(plantAssembler.toEntity(dto));
+        var created = plantService.save(dto);
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "create", "Entidade Plant criada com sucesso", created.getId());
         var uri = builder.path("/plants/{id}").buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uri).body(plantAssembler.toDetailResponse(created));
+        return ResponseEntity.created(uri).body(created);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<PlantDetailsDTO> update(@PathVariable Long id, @RequestBody @Valid PlantCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Recebendo chamada para atualização de entidade Plant", id);
-        var entity = plantService.findById(id);
-        plantAssembler.copyToEntity(dto, entity);
-        entity = plantService.save(entity);
+        var updated = plantService.update(id, dto);
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Entidade Plant atualizada com sucesso", id);
-        return ResponseEntity.ok(plantAssembler.toDetailResponse(entity));
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PlantDetailsDTO> findById(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade Plant por ID", id);
-        return ResponseEntity.ok(plantAssembler.toDetailResponse(plantService.findById(id)));
+        return ResponseEntity.ok(plantService.findById(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<PlantSummaryDTO>> findByRestriction(@RequestParam(required = false) String restriction, Pageable pageable) {
-        log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Plant");
-        var entities = plantService.findByRestriction(restriction, pageable);
-        return ResponseEntity.ok(plantAssembler.toSummaryPage(entities));
+    public ResponseEntity<Page<PlantSummaryDTO>> findByFilter(PlantFilter filter, Pageable pageable) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findByFilter", "Recebendo chamada para listagem de entidades Plant");
+        return ResponseEntity.ok(plantService.findByFilter(filter, pageable));
     }
 
     @DeleteMapping("{id}")

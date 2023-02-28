@@ -1,29 +1,33 @@
 package br.com.palota.mtmanager.domain.repository.specs;
 
 import br.com.palota.mtmanager.domain.model.Plant;
+import br.com.palota.mtmanager.domain.repository.filter.PlantFilter;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 
 public class PlantSpecs {
 
-    public static Specification<Plant> withRestriction(String restriction) {
+    public static Specification<Plant> withFilter(PlantFilter filter) {
         return (root, query, criteriaBuilder) -> {
 
             var predicates = new ArrayList<Predicate>();
 
-            if (StringUtils.hasText(restriction)) {
-                predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("code")), "%" + restriction.toUpperCase() + "%"));
-                predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%" + restriction.toUpperCase() + "%"));
-                predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("address").get("city")), "%" + restriction.toUpperCase() + "%"));
-                predicates.add(criteriaBuilder.equal(criteriaBuilder.upper(root.get("address").get("state")), restriction.toUpperCase()));
-            } else {
-                predicates.add(criteriaBuilder.isNotNull(root.get("id")));
+            if (!ObjectUtils.isEmpty(filter.getId())) {
+                predicates.add(criteriaBuilder.equal(root.get("id"), filter.getId()));
             }
 
-            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+            if (!ObjectUtils.isEmpty(filter.getCode())) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("code")), "%" + filter.getCode().toUpperCase() + "%"));
+            }
+
+            if (!ObjectUtils.isEmpty(filter.getName())) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%" + filter.getName().toUpperCase() + "%"));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 
         };
     }
