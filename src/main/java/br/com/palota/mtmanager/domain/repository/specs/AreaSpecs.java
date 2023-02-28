@@ -19,6 +19,10 @@ public class AreaSpecs {
 
             var predicates = new ArrayList<Predicate>();
 
+            if (!ObjectUtils.isEmpty(filter.getId())) {
+                predicates.add(criteriaBuilder.equal(root.get("id"), filter.getId()));
+            }
+
             if (!ObjectUtils.isEmpty(filter.getCode())) {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("code")), "%" + filter.getCode().toUpperCase() + "%"));
             }
