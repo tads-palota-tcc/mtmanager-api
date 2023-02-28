@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class PlantCreationDTO {
 
+    private Boolean active = true;
+
     @NotBlank
     @Size(min = 1, max = 20)
     private String code;
