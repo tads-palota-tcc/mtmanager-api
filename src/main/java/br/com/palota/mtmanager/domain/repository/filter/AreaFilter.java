@@ -11,5 +11,6 @@ public class AreaFilter {
     private String code;
     private String name;
     private String plantCode;
+    private String status;
 
 }

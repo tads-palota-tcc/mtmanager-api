@@ -15,6 +15,16 @@ public class PlantSpecs {
 
             var predicates = new ArrayList<Predicate>();
 
+            if (!ObjectUtils.isEmpty(filter.getStatus())) {
+                if (filter.getStatus().equals("inactive")) {
+                    predicates.add(criteriaBuilder.equal(root.get("active"), Boolean.FALSE));
+                } else if (!filter.getStatus().equals("all")) {
+                    predicates.add(criteriaBuilder.equal(root.get("active"), Boolean.TRUE));
+                }
+            } else {
+                predicates.add(criteriaBuilder.equal(root.get("active"), Boolean.TRUE));
+            }
+
             if (!ObjectUtils.isEmpty(filter.getId())) {
                 predicates.add(criteriaBuilder.equal(root.get("id"), filter.getId()));
             }

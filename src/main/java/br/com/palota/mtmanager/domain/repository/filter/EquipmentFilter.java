@@ -14,5 +14,6 @@ public class EquipmentFilter {
     private String areaCode;
     private String plantCode;
     private EquipmentType type;
+    private String status;
 
 }

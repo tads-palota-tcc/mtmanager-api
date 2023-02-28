@@ -9,10 +9,10 @@ alter sequence tb_areas_id_seq restart with 1;
 insert into
         tb_plants (code, name, street_name, address_number, address_complement, neighborhood, city, address_state, zip_code, active, created_at, updated_at)
     values
-        ('RG1', 'Unidade Rio Grande 1', 'Rua Valporto', '1000', null, 'Lar Gaúcho', 'Rio Grande', 'RS', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
-        ('PL1', 'Unidade Pelotas 1', 'Rua General Osório', '1000', null, 'Centro', 'Pelotas', 'RS', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
-        ('PA1', 'Unidade Porto Alegre 1', 'Av. Ipiranta', '121', null, 'Centro', 'Porto Alegre', 'RS', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
-        ('FL1', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
+        ('AT1', 'Unidade Rio Grande 1', 'Rua Valporto', '1000', null, 'Lar Gaúcho', 'Rio Grande', 'RS', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
+        ('IN1', 'Unidade Pelotas 1', 'Rua General Osório', '1000', null, 'Centro', 'Pelotas', 'RS', '96200000', 'false', current_timestamp(0), current_timestamp(0)),
+        ('AT2', 'Unidade Porto Alegre 1', 'Av. Ipiranta', '121', null, 'Centro', 'Porto Alegre', 'RS', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
+        ('IN2', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'false', current_timestamp(0), current_timestamp(0)),
 --        ('FL11', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
 --        ('FL12', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
 --        ('FL15', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
@@ -26,8 +26,8 @@ insert into
 --        ('FFR', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
 --        ('FFDX', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
 --        ('FTG1', 'Unidade Florianópolis', 'Rua Gustavo Kurten', '1000', null, 'Centro', 'Florianópolis', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
-        ('ITJ', 'Unidade Itajaí', 'Rua dos Pescadores', '1000', null, 'Centro', 'Itajaí', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
-        ('RJ1', 'Unidade Carioca', 'Rua da Glória', '1000', null, 'Glória', 'Rio de Janeiro', 'RJ', '96200000', 'true', current_timestamp(0), current_timestamp(0));
+        ('AT3', 'Unidade Itajaí', 'Rua dos Pescadores', '1000', null, 'Centro', 'Itajaí', 'SC', '96200000', 'true', current_timestamp(0), current_timestamp(0)),
+        ('IN3', 'Unidade Carioca', 'Rua da Glória', '1000', null, 'Glória', 'Rio de Janeiro', 'RJ', '96200000', 'false', current_timestamp(0), current_timestamp(0));
 
 insert into
         tb_areas (code, name, plant_id, active, created_at, updated_at)

@@ -10,5 +10,6 @@ public class PlantFilter {
     private Long id;
     private String code;
     private String name;
+    private String status;
 
 }

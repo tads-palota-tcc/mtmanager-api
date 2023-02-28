@@ -19,6 +19,16 @@ public class EquipmentSpecs {
 
             var predicates = new ArrayList<Predicate>();
 
+            if (!ObjectUtils.isEmpty(filter.getStatus())) {
+                if (filter.getStatus().equals("inactive")) {
+                    predicates.add(criteriaBuilder.equal(root.get("active"), Boolean.FALSE));
+                } else if (!filter.getStatus().equals("all")) {
+                    predicates.add(criteriaBuilder.equal(root.get("active"), Boolean.TRUE));
+                }
+            } else {
+                predicates.add(criteriaBuilder.equal(root.get("active"), Boolean.TRUE));
+            }
+
             if (!ObjectUtils.isEmpty(filter.getTag())) {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.upper(root.get("tag")), "%" + filter.getTag().toUpperCase() + "%"));
             }
