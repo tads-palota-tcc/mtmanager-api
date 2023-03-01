@@ -17,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -55,6 +58,12 @@ public class PlantService {
     public void delete(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Deletando entiade Plant", id);
         plantRepository.delete(findOrFail(id));
+    }
+
+    public List<PlantSummaryDTO> findByCodeOrName(String restriction) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findByCodeOrName", "Listando entidade Plant por código ou nome");
+        return plantRepository.findTop10ByCodeContainingIgnoreCaseOrNameContainingIgnoreCase(restriction, restriction)
+                .stream().map(e -> mapper.map(e, PlantSummaryDTO.class)).collect(Collectors.toList());
     }
 
     protected Plant findOrFail(Long id) {

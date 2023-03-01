@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -65,6 +68,12 @@ public class PlantController {
         plantService.delete(id);
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Entidade Plant deletada com sucesso", id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(params = "restriction")
+    public ResponseEntity<List<PlantSummaryDTO>> findByRestriction(@RequestParam String restriction) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Plant");
+        return ResponseEntity.ok(plantService.findByCodeOrName(restriction));
     }
 
 }
