@@ -17,6 +17,8 @@ public class AreaCreationDTO {
     @Size(min = 1, max = 20)
     private String code;
 
+    private Boolean active = true;
+
     @NotNull
     @Valid
     private PlantIdDTO plant;
