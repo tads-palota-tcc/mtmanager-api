@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -25,24 +26,45 @@ public class EquipmentCreationDTO {
     private String description;
 
     @NotNull
-    @Positive
-    private Double volume;
+    @Valid
+    private AreaIdDTO area;
+
+    @NotNull
+    private FluidClass fluidClass;
 
     @NotNull
     private Double maxOperationPressure;
 
     @NotNull
+    private Double maxPermissibleWorkingPressure;
+
+    @NotNull
+    @PositiveOrZero
+    private Double hydrostaticTestPressure;
+
+    private String manufacturer;
+
+    private String model;
+
+    private String serialNumber;
+
+    private Integer yearOfManufacture;
+
+    private String projectCode;
+
+    private Integer projectCodeEditionYear;
+
+    @NotNull
+    @Positive
+    private Double diameter;
+
+    @NotNull
+    @Positive
+    private Double volume;
+
+    @NotNull
     private EquipmentType type;
 
-    @NotNull
-    private FluidClass fluidClass;
-
     private Category category;
-
-    @NotNull
-    @Valid
-    private AreaIdDTO area;
-
-
 
 }

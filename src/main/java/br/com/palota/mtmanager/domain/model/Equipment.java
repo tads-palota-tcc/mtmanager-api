@@ -45,16 +45,32 @@ public class Equipment extends BaseEntity<Long> {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private EquipmentType type;
+    private FluidClass fluidClass;
+
+    private Double hydrostaticTestPressure;
+
+    private Double maxOperationPressure;
+
+    private Double maxPermissibleWorkingPressure;
+
+    private String manufacturer;
+
+    private String model;
+
+    private String serialNumber;
+
+    private Integer yearOfManufacture;
+
+    private String projectCode;
+
+    private Integer projectCodeEditionYear;
 
     @Enumerated(EnumType.STRING)
-    private FluidClass fluidClass;
+    private EquipmentType type;
 
     private Double diameter;
 
     private Double volume;
-
-    private Double maxOperationPressure;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -100,7 +116,7 @@ public class Equipment extends BaseEntity<Long> {
     }
 
     private PotentialRiskGroup getPotentialRiskGroup() {
-        var pv = maxOperationPressure * volume;
+        var pv = (maxOperationPressure * volume) / 1000;
         if (pv >= 100.0) return PotentialRiskGroup.GROUP_1;
         if (pv < 100.0 && pv >= 30.0) return PotentialRiskGroup.GROUP_2;
         if (pv < 30.0 && pv >= 2.5) return PotentialRiskGroup.GROUP_3;
