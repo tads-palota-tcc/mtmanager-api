@@ -19,6 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class AreaService {
 
     private final AreaRepository areaRepository;
     private final PlantService plantService;
-    private final ModelMapper modelMapper;
+    private final ModelMapper mapper;
 
     @Transactional
     public AreaDetailsDTO save(AreaCreationDTO dto) {
@@ -35,10 +38,10 @@ public class AreaService {
                 {
                     throw new BusinessException(String.format("Já existe uma Área com código %s para esta Planta", dto.getCode()));
                 });
-        var area = modelMapper.map(dto, Area.class);
+        var area = mapper.map(dto, Area.class);
         var plant = plantService.findOrFail(dto.getPlant().getId());
         area.setPlant(plant);
-        return modelMapper.map(areaRepository.save(area), AreaDetailsDTO.class);
+        return mapper.map(areaRepository.save(area), AreaDetailsDTO.class);
     }
 
     @Transactional
@@ -47,20 +50,26 @@ public class AreaService {
         var oldEntity = findOrFail(id);
         var plant = plantService.findOrFail(dto.getPlant().getId());
         oldEntity.setPlant(new Plant());
-        modelMapper.map(dto, oldEntity);
+        mapper.map(dto, oldEntity);
         oldEntity.setPlant(plant);
-        return modelMapper.map(oldEntity, AreaDetailsDTO.class);
+        return mapper.map(oldEntity, AreaDetailsDTO.class);
     }
 
     public AreaDetailsDTO findById(Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Buscando entidade Area por ID", id);
-        return modelMapper.map(findOrFail(id), AreaDetailsDTO.class);
+        return mapper.map(findOrFail(id), AreaDetailsDTO.class);
     }
 
     public Page<AreaSummaryDTO> findByFilter(AreaFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_FILTER, "findByFilter", "Buscando entidades Area paginadas por filtro", filter);
         return areaRepository.findAll(AreaSpecs.withFilter(filter), pageable)
-                .map(e -> modelMapper.map(e, AreaSummaryDTO.class));
+                .map(e -> mapper.map(e, AreaSummaryDTO.class));
+    }
+
+    public List<AreaSummaryDTO> findByCodeOrName(String restriction) {
+        log.info(Constants.LOG_METHOD_MESSAGE, "findByCodeOrName", "Listando entidade Area por código ou nome");
+        return areaRepository.findTop10ByCodeContainingIgnoreCaseOrNameContainingIgnoreCase(restriction, restriction)
+                .stream().map(e -> mapper.map(e, AreaSummaryDTO.class)).collect(Collectors.toList());
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package br.com.palota.mtmanager.api.dto;
 
+import br.com.palota.mtmanager.domain.model.Category;
 import br.com.palota.mtmanager.domain.model.EquipmentType;
 import br.com.palota.mtmanager.domain.model.FluidClass;
 import jakarta.validation.Valid;
@@ -36,8 +37,12 @@ public class EquipmentCreationDTO {
     @NotNull
     private FluidClass fluidClass;
 
+    private Category category;
+
     @NotNull
     @Valid
     private AreaIdDTO area;
+
+
 
 }
