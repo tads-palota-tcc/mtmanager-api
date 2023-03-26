@@ -67,4 +67,6 @@ public class EquipmentCreationDTO {
 
     private Category category;
 
+    private Boolean active = true;
+
 }
