@@ -26,6 +26,8 @@ public class EquipmentDetailsDTO extends BaseDetailsDTO {
 
     private Category category;
 
+    private Boolean isNr13Equipment;
+
     private AreaSummaryDTO area;
 
 }

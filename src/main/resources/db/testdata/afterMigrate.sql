@@ -38,9 +38,8 @@ insert into
         ('CMP', 'Unidade de compressão', 2, 'true', current_timestamp(0), current_timestamp(0));
 
 insert into
-        tb_equipments (tag, name, description, volume, max_operation_pressure, fluid_class, area_id, type, active, created_at, updated_at)
+        tb_equipments (tag, name, description, diameter, volume, max_operation_pressure, hydrostatic_test_pressure, max_permissible_working_pressure, fluid_class, area_id, type, active, created_at, updated_at)
     values
-        ('CMP-VP-001', 'Vaso de pressão', 'Vaso de pressão para amônia', '3.42', '0.98', 'B', 1, 'PRESSURE_VESSEL', 'true', current_timestamp(0), current_timestamp(0)),
-        ('CMP-VP-002', 'Vaso de pressão', 'Vaso de pressão para amônia', '2.95', '0.98', 'B', 1, 'PRESSURE_VESSEL', 'true', current_timestamp(0), current_timestamp(0)),
-        ('EXT-VP-001', 'Vaso de pressão', 'Vaso de pressão para ar comprimido', '0.35', '0.64', 'C', 2, 'PRESSURE_VESSEL', 'true', current_timestamp(0), current_timestamp(0)),
-        ('EXT-CD-001', 'Caldeira', 'Caldeira de geração de vapor', '2.50', '0.74', 'C', 2, 'BOILER', 'true', current_timestamp(0), current_timestamp(0));
+        ('CMP-VP-001', 'Separador de líquido', 'Separador de líquido para amônia', '500', '0.945', '49.033', '49.033', '50.0', 'C', 1, 'PRESSURE_VESSEL', 'true', current_timestamp(0), current_timestamp(0)),
+        ('CMP-VP-002', 'Recipiente de líquido', 'Vaso de pressão para amônia', '600', '1.429', '1470.998', '1470.998', '1500.0', 'C', 1, 'PRESSURE_VESSEL', 'true', current_timestamp(0), current_timestamp(0)),
+        ('EXT-VP-003', 'Reservatório de ar', 'Vaso de pressão para ar comprimido', '500', '0.196', '980.665', '980.665', '1000.0', 'C', 2, 'PRESSURE_VESSEL', 'true', current_timestamp(0), current_timestamp(0));

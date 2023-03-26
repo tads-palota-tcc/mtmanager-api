@@ -1,0 +1,1 @@
+alter table tb_equipments add column category varchar(3);

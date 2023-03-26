@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.ObjectUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,14 +45,35 @@ public class Equipment extends BaseEntity<Long> {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private EquipmentType type;
+    private FluidClass fluidClass;
+
+    private Double hydrostaticTestPressure;
+
+    private Double maxOperationPressure;
+
+    private Double maxPermissibleWorkingPressure;
+
+    private String manufacturer;
+
+    private String model;
+
+    private String serialNumber;
+
+    private Integer yearOfManufacture;
+
+    private String projectCode;
+
+    private Integer projectCodeEditionYear;
 
     @Enumerated(EnumType.STRING)
-    private FluidClass fluidClass;
+    private EquipmentType type;
+
+    private Double diameter;
 
     private Double volume;
 
-    private Double maxOperationPressure;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "equipment")
@@ -61,7 +83,7 @@ public class Equipment extends BaseEntity<Long> {
     @OneToMany(mappedBy = "equipment")
     private Set<PressureIndicator> pressureIndicators = new HashSet<>();
 
-    public void addPressureValve(PressureSafetyValve pressureSafetyValve) {
+    public void addPressureSafetyValve(PressureSafetyValve pressureSafetyValve) {
         if (pressureSafetyValve.getEquipment() != null || !pressureSafetyValve.getEquipment().equals(this)) {
             throw new BusinessException("Válvula de segurança pertence a outro equipamento");
         }
@@ -69,7 +91,7 @@ public class Equipment extends BaseEntity<Long> {
         this.pressureSafetyValves.add(pressureSafetyValve);
     }
 
-    public void removePressureValve(PressureSafetyValve pressureSafetyValve) {
+    public void removePressureSafetyValve(PressureSafetyValve pressureSafetyValve) {
         if (!this.pressureSafetyValves.contains(pressureSafetyValve)) {
             throw new BusinessException("Válvula de segurança não pertence a este equipamento");
         }
@@ -79,7 +101,7 @@ public class Equipment extends BaseEntity<Long> {
 
     public void addPressureIndicator(PressureIndicator pressureIndicator) {
         if (pressureIndicator.getEquipment() != null || !pressureIndicator.getEquipment().equals(this)) {
-            throw new BusinessException("Válvula de segurança pertence a outro equipamento");
+            throw new BusinessException("Indicador de pressão pertence a outro equipamento");
         }
         pressureIndicator.setEquipment(this);
         this.pressureIndicators.add(pressureIndicator);
@@ -87,14 +109,14 @@ public class Equipment extends BaseEntity<Long> {
 
     public void removePressureIndicator(PressureIndicator pressureIndicator) {
         if (!this.pressureIndicators.contains(pressureIndicator)) {
-            throw new BusinessException("Válvula de segurança não pertence a este equipamento");
+            throw new BusinessException("Indicador de pressão não pertence a este equipamento");
         }
         this.pressureIndicators.remove(pressureIndicator);
         pressureIndicator.setEquipment(null);
     }
 
     private PotentialRiskGroup getPotentialRiskGroup() {
-        var pv = maxOperationPressure * volume;
+        var pv = (maxOperationPressure * volume) / 1000;
         if (pv >= 100.0) return PotentialRiskGroup.GROUP_1;
         if (pv < 100.0 && pv >= 30.0) return PotentialRiskGroup.GROUP_2;
         if (pv < 30.0 && pv >= 2.5) return PotentialRiskGroup.GROUP_3;
@@ -103,7 +125,7 @@ public class Equipment extends BaseEntity<Long> {
     }
 
     public Category getCategory() {
-        Category category = null;
+        if (!ObjectUtils.isEmpty(category)) return category;
         var potentialRiskGroup = getPotentialRiskGroup();
         switch (fluidClass) {
             case A -> {
@@ -118,7 +140,7 @@ public class Equipment extends BaseEntity<Long> {
                     case GROUP_1 -> category = Category.I;
                     case GROUP_2 -> category = Category.II;
                     case GROUP_3 -> category = Category.III;
-                    case GROUP_4, GROUP_5 -> category = Category.V;
+                    case GROUP_4, GROUP_5 -> category = Category.IV;
                 }
             }
             case C -> {
@@ -138,9 +160,14 @@ public class Equipment extends BaseEntity<Long> {
                     case GROUP_4, GROUP_5 -> category = Category.V;
                 }
             }
-
         }
         return category;
+    }
+
+    public boolean getIsNr13Equipment() {
+        if (diameter < 150.0) return false;
+        if (FluidClass.A.equals(fluidClass)) return true;
+        return (maxOperationPressure * volume) > 8.0;
     }
 
 }
