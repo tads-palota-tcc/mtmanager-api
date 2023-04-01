@@ -1,0 +1,1 @@
+alter table tb_devices alter column equipment_id drop not null;
