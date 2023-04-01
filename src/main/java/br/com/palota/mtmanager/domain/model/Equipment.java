@@ -20,6 +20,7 @@ import lombok.Setter;
 import org.springframework.util.ObjectUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -115,13 +116,12 @@ public class Equipment extends BaseEntity<Long> {
         pressureIndicator.setEquipment(null);
     }
 
-    private PotentialRiskGroup getPotentialRiskGroup() {
-        var pv = (maxOperationPressure * volume) / 1000;
-        if (pv >= 100.0) return PotentialRiskGroup.GROUP_1;
-        if (pv < 100.0 && pv >= 30.0) return PotentialRiskGroup.GROUP_2;
-        if (pv < 30.0 && pv >= 2.5) return PotentialRiskGroup.GROUP_3;
-        if (pv < 2.5 && pv >= 1.0) return PotentialRiskGroup.GROUP_4;
-        return PotentialRiskGroup.GROUP_5;
+    public List<PressureSafetyValve> getPressureSafetyValves() {
+        return List.copyOf(this.pressureSafetyValves);
+    }
+
+    public List<PressureIndicator> getPressureIndicators() {
+        return List.copyOf(this.pressureIndicators);
     }
 
     public Category getCategory() {
@@ -168,6 +168,15 @@ public class Equipment extends BaseEntity<Long> {
         if (diameter < 150.0) return false;
         if (FluidClass.A.equals(fluidClass)) return true;
         return (maxOperationPressure * volume) > 8.0;
+    }
+
+    private PotentialRiskGroup getPotentialRiskGroup() {
+        var pv = (maxOperationPressure * volume) / 1000;
+        if (pv >= 100.0) return PotentialRiskGroup.GROUP_1;
+        if (pv < 100.0 && pv >= 30.0) return PotentialRiskGroup.GROUP_2;
+        if (pv < 30.0 && pv >= 2.5) return PotentialRiskGroup.GROUP_3;
+        if (pv < 2.5 && pv >= 1.0) return PotentialRiskGroup.GROUP_4;
+        return PotentialRiskGroup.GROUP_5;
     }
 
 }
