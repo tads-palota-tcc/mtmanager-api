@@ -1,3 +1,6 @@
+delete from tb_pressure_indicators;
+delete from tb_pressure_safety_valves;
+delete from tb_devices;
 delete from tb_equipments;
 delete from tb_areas;
 delete from tb_plants;
@@ -5,6 +8,7 @@ delete from tb_plants;
 alter sequence tb_equipments_id_seq restart with 1;
 alter sequence tb_plants_id_seq restart with 1;
 alter sequence tb_areas_id_seq restart with 1;
+alter sequence tb_devices_id_seq restart with 1;
 
 insert into
         tb_plants (code, name, street_name, address_number, address_complement, neighborhood, city, address_state, zip_code, active, created_at, updated_at)
