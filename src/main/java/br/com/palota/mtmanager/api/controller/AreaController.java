@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ public class AreaController {
     private final PlantService plantService;
 
     @PostMapping
+    @Secured("AREA_CREATE")
     public ResponseEntity<AreaDetailsDTO> create(@RequestBody @Valid AreaCreationDTO dto, UriComponentsBuilder builder) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "Recebendo chamada para criação de entidade Area");
         try {
@@ -51,6 +53,7 @@ public class AreaController {
     }
 
     @PutMapping("{id}")
+    @Secured("AREA_UPDATE")
     public ResponseEntity<AreaDetailsDTO> update(@PathVariable Long id, @RequestBody @Valid AreaCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Recebendo chamada para atualização de entidade Area", id);
         try {
@@ -63,18 +66,21 @@ public class AreaController {
     }
 
     @GetMapping("{id}")
+    @Secured("AREA_READ")
     public ResponseEntity<AreaDetailsDTO> findById(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade Area por ID", id);
         return ResponseEntity.ok(areaService.findById(id));
     }
 
     @GetMapping
+    @Secured("AREA_READ")
     public ResponseEntity<Page<AreaSummaryDTO>> findByRestriction(AreaFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Area");
         return ResponseEntity.ok(areaService.findByFilter(filter, pageable));
     }
 
     @DeleteMapping("{id}")
+    @Secured("AREA_REMOVE")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Recebendo chamada para deletar entidade Area", id);
         areaService.delete(id);
@@ -83,6 +89,7 @@ public class AreaController {
     }
 
     @GetMapping(params = "restriction")
+    @Secured("AREA_READ")
     public ResponseEntity<List<AreaSummaryDTO>> findByRestriction(@RequestParam String restriction) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Plant");
         return ResponseEntity.ok(areaService.findByCodeOrName(restriction));

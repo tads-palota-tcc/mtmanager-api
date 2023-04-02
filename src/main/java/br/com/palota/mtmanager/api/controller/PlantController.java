@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ public class PlantController {
     private final PlantService plantService;
 
     @PostMapping
+    @Secured("PLANT_CREATE")
     public ResponseEntity<PlantDetailsDTO> create(@RequestBody @Valid PlantCreationDTO dto, UriComponentsBuilder builder) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "Recebendo chamada para criação de entidade Plant");
         var created = plantService.save(dto);
@@ -43,6 +45,7 @@ public class PlantController {
     }
 
     @PutMapping("{id}")
+    @Secured("PLANT_UPDATE")
     public ResponseEntity<PlantDetailsDTO> update(@PathVariable Long id, @RequestBody @Valid PlantCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Recebendo chamada para atualização de entidade Plant", id);
         var updated = plantService.update(id, dto);
@@ -51,18 +54,21 @@ public class PlantController {
     }
 
     @GetMapping("{id}")
+    @Secured("PLANT_READ")
     public ResponseEntity<PlantDetailsDTO> findById(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade Plant por ID", id);
         return ResponseEntity.ok(plantService.findById(id));
     }
 
     @GetMapping
+    @Secured("PLANT_READ")
     public ResponseEntity<Page<PlantSummaryDTO>> findByFilter(PlantFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByFilter", "Recebendo chamada para listagem de entidades Plant");
         return ResponseEntity.ok(plantService.findByFilter(filter, pageable));
     }
 
     @DeleteMapping("{id}")
+    @Secured("PLANT_REMOVE")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Recebendo chamada para deletar entidade Plant", id);
         plantService.delete(id);
@@ -71,6 +77,7 @@ public class PlantController {
     }
 
     @GetMapping(params = "restriction")
+    @Secured("PLANT_READ")
     public ResponseEntity<List<PlantSummaryDTO>> findByRestriction(@RequestParam String restriction) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByRestriction", "Recebendo chamada para listagem de entidades Plant");
         return ResponseEntity.ok(plantService.findByCodeOrName(restriction));

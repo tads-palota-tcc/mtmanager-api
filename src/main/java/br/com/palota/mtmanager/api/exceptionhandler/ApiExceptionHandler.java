@@ -2,6 +2,7 @@ package br.com.palota.mtmanager.api.exceptionhandler;
 
 import br.com.palota.mtmanager.domain.exception.BusinessException;
 import br.com.palota.mtmanager.domain.exception.EntityNotFoundException;
+import br.com.palota.mtmanager.domain.exception.TokenValidationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
@@ -86,6 +87,29 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .userMessage(detail)
                 .build();
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(TokenValidationException.class)
+    public ResponseEntity<?> handleTokenValidationException(TokenValidationException ex, WebRequest request) {
+        var status = HttpStatus.BAD_REQUEST;
+        var errorType = ErrorType.AUTHENTICATION_ERROR;
+        var detail = ex.getMessage();
+        var problem = createErrorBuilder(status, errorType, detail)
+                .userMessage(detail)
+                .build();
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ErrorType errorType = ErrorType.SYSTEM_ERROR;
+
+        Error error = createErrorBuilder(status, errorType, USER_MESSAGE)
+                .userMessage(USER_MESSAGE)
+                .build();
+
+        return handleExceptionInternal(ex, error, new HttpHeaders(), status, request);
     }
 
     private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult, HttpHeaders headers,

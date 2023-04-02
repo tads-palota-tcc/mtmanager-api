@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class EquipmentController {
     private final AreaService areaService;
 
     @PostMapping
+    @Secured("EQUIPMENT_CREATE")
     public ResponseEntity<EquipmentDetailsDTO> create(@RequestBody @Valid EquipmentCreationDTO dto, UriComponentsBuilder builder) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "Recebendo chamada para criação de entidade Equipment");
         try {
@@ -48,6 +50,7 @@ public class EquipmentController {
     }
 
     @PutMapping("{id}")
+    @Secured("EQUIPMENT_UPDATE")
     public ResponseEntity<EquipmentDetailsDTO> update(@PathVariable Long id, @RequestBody @Valid EquipmentCreationDTO dto) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "update", "Recebendo chamada para atualização de entidade Equipment", id);
         try {
@@ -60,18 +63,21 @@ public class EquipmentController {
     }
 
     @GetMapping("{id}")
+    @Secured("EQUIPMENT_READ")
     public ResponseEntity<EquipmentDetailsDTO> findById(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade Equipment por ID", id);
         return ResponseEntity.ok(equipmentService.findById(id));
     }
 
     @GetMapping
+    @Secured("EQUIPMENT_CREATE")
     public ResponseEntity<Page<EquipmentSummaryDTO>> findByFilter(EquipmentFilter filter, Pageable pageable) {
         log.info(Constants.LOG_METHOD_MESSAGE, "findByFilter", "Recebendo chamada para listagem de entidades Equipment paginadas por filtro");
         return ResponseEntity.ok(equipmentService.findByFilter(filter, pageable));
     }
 
     @DeleteMapping("{id}")
+    @Secured("EQUIPMENT_REMOVE")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "delete", "Recebendo chamada para deletar entidade Equipment", id);
         equipmentService.delete(id);

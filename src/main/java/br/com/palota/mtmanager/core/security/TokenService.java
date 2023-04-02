@@ -1,5 +1,6 @@
 package br.com.palota.mtmanager.core.security;
 
+import br.com.palota.mtmanager.domain.exception.TokenValidationException;
 import br.com.palota.mtmanager.domain.model.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -45,8 +46,8 @@ public class TokenService {
                     .build().verify(token)
                     .getSubject();
 
-        } catch (JWTVerificationException exception){
-            throw new RuntimeException("Token jwt inválido ou expirado");
+        } catch (JWTVerificationException exception) {
+            throw new TokenValidationException ("Token inválido ou expirado");
         }
     }
 

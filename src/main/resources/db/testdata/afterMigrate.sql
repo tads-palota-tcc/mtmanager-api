@@ -21,18 +21,34 @@ alter sequence tb_groups_id_seq restart with 1;
 alter sequence tb_permissions_id_seq restart with 1;
 alter sequence tb_users_id_seq restart with 1;
 
+-- KeyUser (acessa tudo, menos as funções de usuário
 insert into tb_users (name, email, password, active, created_at, updated_at) values ('Alexandre Silva', 'alexandre@email.com', '$2a$12$Gnfye0jPRWC68Zp4FS5Dp./qQnwPYkt4BPFFB92BZ76Bcs2F6yLMK', 'true', current_timestamp(0), current_timestamp(0));
+-- Inspetor
 insert into tb_users (name, email, password, active, created_at, updated_at) values ('Marina Webber', 'marina@email.com', '$2a$12$Gnfye0jPRWC68Zp4FS5Dp./qQnwPYkt4BPFFB92BZ76Bcs2F6yLMK', 'true', current_timestamp(0), current_timestamp(0));
+-- Supervisor
+insert into tb_users (name, email, password, active, created_at, updated_at) values ('Miguel Webber', 'miguel@email.com', '$2a$12$Gnfye0jPRWC68Zp4FS5Dp./qQnwPYkt4BPFFB92BZ76Bcs2F6yLMK', 'true', current_timestamp(0), current_timestamp(0));
+-- Admin
+insert into tb_users (name, email, password, active, created_at, updated_at) values ('Juliana Miranda', 'juliana@email.com', '$2a$12$Gnfye0jPRWC68Zp4FS5Dp./qQnwPYkt4BPFFB92BZ76Bcs2F6yLMK', 'true', current_timestamp(0), current_timestamp(0));
 
-insert into tb_groups (name) values ('Admin'), ('Inspetor');
+insert into tb_groups (name) values ('Admin'), ('Inspetor'), ('Supervisor'), ('KeyUser');
 
-insert into tb_permissions (name) values ('EDICAO'), ('CRIACAO'), ('REMOCAO'), ('CONSULTA');
+insert into tb_permissions (name) values ('PLANT_UPDATE'), ('PLANT_CREATE'), ('PLANT_REMOVE'), ('PLANT_READ');
+insert into tb_permissions (name) values ('AREA_UPDATE'), ('AREA_CREATE'), ('AREA_REMOVE'), ('AREA_READ');
+insert into tb_permissions (name) values ('EQUIPMENT_UPDATE'), ('EQUIPMENT_CREATE'), ('EQUIPMENT_REMOVE'), ('EQUIPMENT_READ');
+insert into tb_permissions (name) values ('DEVICE_UPDATE'), ('DEVICE_CREATE'), ('DEVICE_REMOVE'), ('DEVICE_READ');
+insert into tb_permissions (name) values ('INSPECTION_UPDATE'), ('INSPECTION_CREATE'), ('INSPECTION_REMOVE'), ('INSPECTION_READ');
+insert into tb_permissions (name) values ('USER_UPDATE'), ('USER_CREATE'), ('USER_REMOVE'), ('USER_READ');
 
-insert into tb_groups_permissions (group_id, permission_id) values (1, 1), (1, 2), (1, 3), (1, 4);
-insert into tb_groups_permissions (group_id, permission_id) values (2, 2), (2, 4);
+insert into tb_groups_permissions (group_id, permission_id) values (1, 1), (1, 2), (1, 3), (1, 4), (1, 21), (1, 22), (1, 23), (1, 24); -- ADMIN
+insert into tb_groups_permissions (group_id, permission_id) values (2, 4), (2, 8), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 17), (2, 18), (2, 19), (2, 20); -- INSPETOR
+insert into tb_groups_permissions (group_id, permission_id) values (3, 4), (3, 8), (3, 12), (3, 16), (3, 20); -- SUPERVISOR
+insert into tb_groups_permissions (group_id, permission_id) values (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (4, 6), (4, 7), (4, 8), (4, 9), (4, 10); -- KEY_USER
+insert into tb_groups_permissions (group_id, permission_id) values (4, 11), (4, 12), (4, 13), (4, 14), (4, 15), (4, 16), (4, 17), (4, 18), (4, 19), (4, 20); -- KEY_USER
 
-insert into tb_users_groups (user_id, group_id) values (1, 1);
+insert into tb_users_groups (user_id, group_id) values (1, 4);
 insert into tb_users_groups (user_id, group_id) values (2, 2);
+insert into tb_users_groups (user_id, group_id) values (3, 3);
+insert into tb_users_groups (user_id, group_id) values (4, 1);
 
 insert into
         tb_plants (code, name, street_name, address_number, address_complement, neighborhood, city, address_state, zip_code, active, created_at, updated_at)

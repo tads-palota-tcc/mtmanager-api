@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ public class PressureIndicatorsController {
     private final PressureIndicatorService pressureIndicatorService;
 
     @PostMapping
+    @Secured("DEVICE_CREATE")
     public ResponseEntity<PressureIndicatorDetailsDTO> create(@RequestBody @Valid PressureIndicatorCreationDTO dto, UriComponentsBuilder builder) {
         log.info(Constants.LOG_METHOD_MESSAGE, "create", "Recebendo chamada para criação de entidade PressureIndicator");
         var created = pressureIndicatorService.save(dto);
@@ -34,6 +36,7 @@ public class PressureIndicatorsController {
     }
 
     @GetMapping("{id}")
+    @Secured("DEVICE_READ")
     public ResponseEntity<PressureIndicatorDetailsDTO> findById(@PathVariable Long id) {
         log.info(Constants.LOG_METHOD_MESSAGE + Constants.LOG_ENTITY_ID, "findById", "Recebendo chamada consulta de entidade PressureIndicator por ID", id);
         return ResponseEntity.ok(pressureIndicatorService.findById(id));
