@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -69,6 +70,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleBusinessException(BusinessException ex, WebRequest request) {
         var status = HttpStatus.BAD_REQUEST;
         var errorType = ErrorType.BUSINESS_ERROR;
+        var detail = ex.getMessage();
+        var problem = createErrorBuilder(status, errorType, detail)
+                .userMessage(detail)
+                .build();
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        var status = HttpStatus.BAD_REQUEST;
+        var errorType = ErrorType.AUTHENTICATION_ERROR;
         var detail = ex.getMessage();
         var problem = createErrorBuilder(status, errorType, detail)
                 .userMessage(detail)

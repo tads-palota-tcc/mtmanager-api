@@ -1,11 +1,9 @@
 package br.com.palota.mtmanager.domain.service;
 
-import br.com.palota.mtmanager.api.dto.PlantDetailsDTO;
 import br.com.palota.mtmanager.api.dto.PressureIndicatorCreationDTO;
 import br.com.palota.mtmanager.api.dto.PressureIndicatorDetailsDTO;
 import br.com.palota.mtmanager.core.Constants;
 import br.com.palota.mtmanager.domain.exception.PlantNotFoundException;
-import br.com.palota.mtmanager.domain.model.Plant;
 import br.com.palota.mtmanager.domain.model.PressureIndicator;
 import br.com.palota.mtmanager.domain.repository.PressureIndicatorRepository;
 import lombok.RequiredArgsConstructor;
