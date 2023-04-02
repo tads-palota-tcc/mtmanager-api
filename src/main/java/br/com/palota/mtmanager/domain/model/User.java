@@ -35,6 +35,14 @@ public class User extends BaseEntity<Long> implements UserDetails {
 
     private String email;
 
+    @ManyToMany
+    @JoinTable(
+            name = "tb_users_plants",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "plant_id", referencedColumnName = "id")
+    )
+    private Set<Plant> plants = new HashSet<>();
+
     private String password;
 
     @ManyToMany
