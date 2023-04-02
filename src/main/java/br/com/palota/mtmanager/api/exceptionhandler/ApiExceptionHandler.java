@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -89,6 +90,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        var status = HttpStatus.FORBIDDEN;
+        var errorType = ErrorType.AUTHENTICATION_ERROR;
+        var detail = "Acesso negado";
+        var problem = createErrorBuilder(status, errorType, detail)
+                .userMessage("Usuário não possui acesso ao recurso solicitado")
+                .build();
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
     @ExceptionHandler(TokenValidationException.class)
     public ResponseEntity<?> handleTokenValidationException(TokenValidationException ex, WebRequest request) {
         var status = HttpStatus.BAD_REQUEST;
@@ -104,6 +116,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorType errorType = ErrorType.SYSTEM_ERROR;
+
+        ex.printStackTrace();
 
         Error error = createErrorBuilder(status, errorType, USER_MESSAGE)
                 .userMessage(USER_MESSAGE)
