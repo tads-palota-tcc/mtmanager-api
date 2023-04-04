@@ -25,4 +25,4 @@
 
 * Para gerar o container, passar as variáveis de ambiente como parâmetro.
 
-```docker run --name mtmanager-app -p 8080:8080 --network mtmanager-network -e DB_HOSTNAME=mt_manager_db -e DB_PORT=5432 mtmanager-api```
+```docker container run --name mtmanager-api -p 8080:8080 --network mtmanager-network -e DB_HOST=mtmanager-db -e DB_PORT=5432 -DB_NAME=mt_manager_db mtmanager-api```
